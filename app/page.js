@@ -82,6 +82,7 @@ export default function MoodGame() {
     happyEndMessages[Math.floor(Math.random() * happyEndMessages.length)]
   );
   const [showFunnySection, setShowFunnySection] = useState(false);
+  const [caughtEffect, setCaughtEffect] = useState(null);
 
   const intervalRef = useRef(null);
 
@@ -97,8 +98,10 @@ export default function MoodGame() {
   useEffect(() => {
     if (gameOver || happyEnd) return;
 
-    let intervalTime = 1000; // initial interval for item generation
-    let fallDuration = 4000; // initial fall duration
+    // initial interval for item generation
+    let intervalTime = 1000;
+    // initial fall duration
+    let fallDuration = 4000;
 
     const generateItem = () => {
       const id = Date.now();
@@ -148,13 +151,55 @@ export default function MoodGame() {
   }, [happyEnd]);
 
   const catchItem = (id, symbol) => {
-    if (symbol === "💣") {
-      setGameOver(true);
-      return;
-    }
-    setScore((prev) => prev + 1);
-    setMessage(gameMessages[Math.floor(Math.random() * gameMessages.length)]);
     setItems((prev) => prev.filter((item) => item.id !== id));
+
+    let points = 0;
+    let type = "positive";
+
+    switch (symbol) {
+      case "❤️":
+        points = 5;
+        type = "positive";
+        setScore((prev) => prev + points);
+        break;
+      case "🌹":
+        points = 10;
+        type = "positive";
+        setScore((prev) => prev + points);
+        break;
+      case "🐸":
+        points = -1;
+        type = "negative";
+        setScore((prev) => (prev + points >= 0 ? prev + points : 0));
+        break;
+      case "💣":
+        type = "bomb";
+        points = 0;
+        break;
+      default:
+        points = 1;
+        type = "positive";
+        setScore((prev) => prev + points);
+    }
+
+    setMessage(
+      symbol === "💣"
+        ? "💥 বোম্ব! হুহ, গেম শেষ হবে... 😭"
+        : gameMessages[Math.floor(Math.random() * gameMessages.length)]
+    );
+
+    // set caughtEffect only once
+    setCaughtEffect({ type, points });
+
+    // remove effect after animation duration
+    setTimeout(() => {
+      setCaughtEffect(null);
+      // trigger gameOver after bomb animation
+      if (type === "bomb") {
+        setGameOver(true);
+        setMessage("💥 বোম্ব! গেম শেষ, মুড ঠিক হয়নি?? :((");
+      }
+    }, 800);
   };
 
   const restartGame = () => {
@@ -189,6 +234,7 @@ export default function MoodGame() {
           score={score}
           handleHappyEnd={handleHappyEnd}
           restartGame={restartGame}
+          gameoverMessage={message}
         />
       ) : happyEnd && !showFunnySection ? (
         <HappyEnd
@@ -223,6 +269,52 @@ export default function MoodGame() {
           )}
 
           <GameContainer items={items} catchItem={catchItem} />
+          {caughtEffect && (
+            <motion.div
+              key={Date.now()}
+              initial={{ scale: 0, opacity: 0, y: 0 }}
+              animate={{
+                scale:
+                  caughtEffect.type === "bomb"
+                    ? 2.5
+                    : caughtEffect.points >= 10
+                    ? 2.2
+                    : caughtEffect.points > 0
+                    ? 1.8
+                    : 1.6,
+                opacity: 1,
+                y: caughtEffect.type === "bomb" ? -150 : -100,
+                rotate:
+                  caughtEffect.type === "negative"
+                    ? [0, -10, 10, -5, 5, 0]
+                    : [0, 5, -5, 5, -5, 0],
+                color:
+                  caughtEffect.type === "bomb"
+                    ? "#8B0000"
+                    : caughtEffect.points === 10
+                    ? "#C7007F"
+                    : caughtEffect.points === 5
+                    ? "#006400"
+                    : caughtEffect.points === -1
+                    ? "#8B0000"
+                    : "#000000",
+              }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.8,
+                ease: "easeOut",
+                y: { type: "tween", duration: 0.8 },
+                scale: { type: "spring", stiffness: 300, damping: 20 },
+              }}
+              className="absolute top-20 left-1/2 -translate-x-1/2 font-extrabold text-7xl sm:text-8xl md:text-9xl pointer-events-none z-50"
+            >
+              {caughtEffect.type === "bomb"
+                ? "💥"
+                : caughtEffect.points > 0
+                ? `+${caughtEffect.points}`
+                : `${caughtEffect.points}`}
+            </motion.div>
+          )}
 
           <div className="mt-4 w-full text-center overflow-hidden">
             <p className="text-2xl sm:text-3xl font-semibold text-pink-700 animate-marquee px-2">

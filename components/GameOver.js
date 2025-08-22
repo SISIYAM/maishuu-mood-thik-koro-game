@@ -1,11 +1,14 @@
 import React from "react";
 
-function GameOver({ score, handleHappyEnd, restartGame }) {
+function GameOver({ score, handleHappyEnd, restartGame, gameoverMessage }) {
   return (
     <div className="flex flex-col items-center justify-center bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-md">
       <h2 className="text-2xl font-bold text-red-500 mb-4 animate-bounce">
         Game Over 😭
       </h2>
+      <p className="text-lg mb-6 text-gray-700 animate-bounce">
+        {gameoverMessage}!
+      </p>
       <p className="text-lg mb-6 text-gray-700 animate-bounce">
         তুমি {score} পয়েন্ট পেয়েছ!
       </p>
