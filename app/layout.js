@@ -13,8 +13,7 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Maishuuu Mood Fix Game",
-  description:
-    "Play this fun interactive game to cheer up Maishuuu and boost their mood! 😻🎮",
+  description: "এই গেমটি খেললে Maishuuu, তোমার মুড ঠিক হবে! huh frr 😻 ^_^",
 };
 
 export default function RootLayout({ children }) {
