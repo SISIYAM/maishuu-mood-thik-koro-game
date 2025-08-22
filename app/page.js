@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
 import GameOver from "@/components/GameOver";
 import HappyEnd from "@/components/HappyEnd";
 import FunnySection from "@/components/FunnySection";
 import GameContainer from "@/components/GameContainer";
 import "./style.css";
+import CaughtEffect from "@/components/CaughtEffect";
 
 const rejectMessage =
   "কেনো খেলবা না? এত কষ্ট করেছি তোমার জন্য game বানিয়েছি, আর তুমি এমন করলা! হাইরে! 😠";
@@ -83,6 +83,7 @@ export default function MoodGame() {
   );
   const [showFunnySection, setShowFunnySection] = useState(false);
   const [caughtEffect, setCaughtEffect] = useState(null);
+  const [effectId, setEffectId] = useState(0);
 
   const intervalRef = useRef(null);
 
@@ -150,6 +151,7 @@ export default function MoodGame() {
     return () => clearInterval(interval);
   }, [happyEnd]);
 
+  // catch item effect
   const catchItem = (id, symbol) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
 
@@ -188,13 +190,15 @@ export default function MoodGame() {
         : gameMessages[Math.floor(Math.random() * gameMessages.length)]
     );
 
-    // set caughtEffect only once
-    setCaughtEffect({ type, points });
+    // Increment effectId to give unique key
+    setEffectId((prev) => prev + 1);
 
-    // remove effect after animation duration
+    // set caughtEffect once
+    setCaughtEffect({ id: effectId + 1, type, points });
+
+    // remove effect after animation
     setTimeout(() => {
       setCaughtEffect(null);
-      // trigger gameOver after bomb animation
       if (type === "bomb") {
         setGameOver(true);
         setMessage("💥 বোম্ব! গেম শেষ, মুড ঠিক হয়নি?? :((");
@@ -269,52 +273,7 @@ export default function MoodGame() {
           )}
 
           <GameContainer items={items} catchItem={catchItem} />
-          {caughtEffect && (
-            <motion.div
-              key={Date.now()}
-              initial={{ scale: 0, opacity: 0, y: 0 }}
-              animate={{
-                scale:
-                  caughtEffect.type === "bomb"
-                    ? 2.5
-                    : caughtEffect.points >= 10
-                    ? 2.2
-                    : caughtEffect.points > 0
-                    ? 1.8
-                    : 1.6,
-                opacity: 1,
-                y: caughtEffect.type === "bomb" ? -150 : -100,
-                rotate:
-                  caughtEffect.type === "negative"
-                    ? [0, -10, 10, -5, 5, 0]
-                    : [0, 5, -5, 5, -5, 0],
-                color:
-                  caughtEffect.type === "bomb"
-                    ? "#8B0000"
-                    : caughtEffect.points === 10
-                    ? "#C7007F"
-                    : caughtEffect.points === 5
-                    ? "#006400"
-                    : caughtEffect.points === -1
-                    ? "#8B0000"
-                    : "#000000",
-              }}
-              exit={{ opacity: 0 }}
-              transition={{
-                duration: 0.8,
-                ease: "easeOut",
-                y: { type: "tween", duration: 0.8 },
-                scale: { type: "spring", stiffness: 300, damping: 20 },
-              }}
-              className="absolute top-20 left-1/2 -translate-x-1/2 font-extrabold text-7xl sm:text-8xl md:text-9xl pointer-events-none z-50"
-            >
-              {caughtEffect.type === "bomb"
-                ? "💥"
-                : caughtEffect.points > 0
-                ? `+${caughtEffect.points}`
-                : `${caughtEffect.points}`}
-            </motion.div>
-          )}
+          {caughtEffect && <CaughtEffect caughtEffect={caughtEffect} />}
 
           <div className="mt-4 w-full text-center overflow-hidden">
             <p className="text-2xl sm:text-3xl font-semibold text-pink-700 animate-marquee px-2">
