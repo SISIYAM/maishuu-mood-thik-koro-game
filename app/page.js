@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+
 import GameOver from "@/components/GameOver";
 import HappyEnd from "@/components/HappyEnd";
 import FunnySection from "@/components/FunnySection";
@@ -252,11 +253,11 @@ export default function MoodGame() {
       ) : (
         <>
           {/* Game Instructions / Disclaimer */}
-          <div className="mb-4 w-full max-w-md mx-auto bg-pink-50 border-2 border-pink-200 rounded-xl p-3 text-center shadow-md">
+          <div className="mb-4 -mt-10 w-full max-w-md mx-auto bg-pink-50 border-2 border-pink-200 rounded-xl p-3 text-center shadow-md">
             <p className="text-pink-700 font-medium text-sm sm:text-base">
               🎮 কিভাবে খেলতে হবে: ❤️ ক্যাচ করো, 🐱 ক্যাচ করো এবং 💣 বোম্ব
               এড়াও। <br />
-              ⚠️ যদি 10টি হারাও বা বোম্ব ধরো, গেম ওভার হবে। <br />
+              ⚠️ যদি 10টি ❤️ হারাও বা বোম্ব ধরো, গেম ওভার হবে। <br />
               😻 মজা করো, Maishuuu এর মুড ঠিক করো!
             </p>
           </div>
