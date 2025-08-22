@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
+import GameOver from "@/components/GameOver";
+import HappyEnd from "@/components/HappyEnd";
+import FunnySection from "@/components/FunnySection";
+import GameContainer from "@/components/GameContainer";
+import "./style.css";
 
 const rejectMessage =
   "কেনো খেলবা না? এত কষ্ট করেছি তোমার জন্য game বানিয়েছি, আর তুমি এমন করলা! হাইরে! 😠";
@@ -128,7 +133,7 @@ export default function MoodGame() {
 
   // game Over if too many misses
   useEffect(() => {
-    if (missed >= 6) setGameOver(true);
+    if (missed >= 10) setGameOver(true);
   }, [missed]);
 
   // randomly change happy end message
@@ -180,94 +185,35 @@ export default function MoodGame() {
       </h1>
 
       {gameOver ? (
-        <div className="flex flex-col items-center justify-center bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-md">
-          <h2 className="text-2xl font-bold text-red-500 mb-4 animate-bounce">
-            Game Over 😭
-          </h2>
-          <p className="text-lg mb-6 text-gray-700 animate-bounce">
-            তুমি {score} পয়েন্ট পেয়েছ!
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
-            <button
-              onClick={handleHappyEnd}
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
-            >
-              হ্যাঁ মুড ভালো করেছি 😄
-            </button>
-            <button
-              onClick={restartGame}
-              className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
-            >
-              না, এখনো হয়নি 😒
-            </button>
-          </div>
-        </div>
+        <GameOver
+          score={score}
+          handleHappyEnd={handleHappyEnd}
+          restartGame={restartGame}
+        />
       ) : happyEnd && !showFunnySection ? (
-        <div className="flex flex-col items-center justify-center bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-md">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pink-600 mb-4 animate-bounce">
-            {happyMessage}
-          </h2>
-
-          <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full justify-center relative">
-            <button
-              onClick={restartGame}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
-            >
-              আবার খেলবো 😁
-            </button>
-
-            <button
-              onClick={() => {
-                setFunnyMsg(rejectMessage);
-                setShowFunnySection(true);
-              }}
-              className="px-6 py-3 bg-red-400 text-white rounded-xl font-bold shadow-lg w-full sm:w-auto"
-            >
-              না আর খেলবো না 😒
-            </button>
-          </div>
-        </div>
+        <HappyEnd
+          happyMessage={happyMessage}
+          restartGame={restartGame}
+          setFunnyMsg={setFunnyMsg}
+          setShowFunnySection={setShowFunnySection}
+        />
       ) : showFunnySection ? (
-        <div className="flex flex-col items-center justify-center bg-white rounded-3xl shadow-3xl p-8 z-10 w-full max-w-3xl mt-8">
-          {funnyMsg && (
-            <motion.p
-              className="text-red-700 font-bold mb-6 text-center px-6 py-4 bg-gradient-to-r from-pink-200 to-pink-400 rounded-xl shadow-lg text-lg sm:text-xl"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-            >
-              {funnyMsg}
-            </motion.p>
-          )}
-
-          <div className="flex flex-col sm:flex-row gap-6 mt-6 w-full justify-center relative">
-            <button
-              onClick={restartGame}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl text-lg font-semibold w-full sm:w-auto transition-transform duration-200 hover:scale-105"
-            >
-              আচ্ছা খেলবো 😁
-            </button>
-
-            <motion.button
-              whileHover={{
-                x: Math.random() * 120 - 60,
-                y: Math.random() * 60 - 30,
-              }}
-              whileTap={{
-                x: Math.random() * 120 - 60,
-                y: Math.random() * 60 - 30,
-              }}
-              className="px-6 py-3 bg-red-500 text-white rounded-2xl font-bold shadow-xl cursor-not-allowed text-lg w-full sm:w-auto"
-            >
-              না এখনও খেলবো না 😒
-            </motion.button>
-          </div>
-        </div>
+        <FunnySection funnyMsg={funnyMsg} restartGame={restartGame} />
       ) : (
         <>
+          {/* Game Instructions / Disclaimer */}
+          <div className="mb-4 w-full max-w-md mx-auto bg-pink-50 border-2 border-pink-200 rounded-xl p-3 text-center shadow-md">
+            <p className="text-pink-700 font-medium text-sm sm:text-base">
+              🎮 কিভাবে খেলতে হবে: ❤️ ক্যাচ করো, 🐱 ক্যাচ করো এবং 💣 বোম্ব
+              এড়াও। <br />
+              ⚠️ যদি 10টি হারাও বা বোম্ব ধরো, গেম ওভার হবে। <br />
+              😻 মজা করো, Maishuuu এর মুড ঠিক করো!
+            </p>
+          </div>
           <p className="text-xl mb-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-full shadow-lg w-full max-w-md mx-auto">
             Score: <span className="font-bold">{score}</span> | Missed ❤️:{" "}
             {missed}
-            /5
+            /10
           </p>
 
           {message && (
@@ -276,20 +222,7 @@ export default function MoodGame() {
             </p>
           )}
 
-          <div className="relative w-full max-w-lg h-[350px] sm:h-[400px] bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-pink-400">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                onClick={() => catchItem(item.id, item.symbol)}
-                className={`absolute text-5xl sm:text-6xl cursor-pointer select-none animate-fall transition-transform duration-200 hover:scale-125 ${
-                  item.symbol === "💣" ? "text-red-600" : ""
-                }`}
-                style={{ left: `${item.x}%`, top: 0 }}
-              >
-                {item.symbol}
-              </div>
-            ))}
-          </div>
+          <GameContainer items={items} catchItem={catchItem} />
 
           <div className="mt-4 w-full text-center overflow-hidden">
             <p className="text-2xl sm:text-3xl font-semibold text-pink-700 animate-marquee px-2">
@@ -298,35 +231,6 @@ export default function MoodGame() {
           </div>
         </>
       )}
-
-      <style jsx>{`
-        .animate-fall {
-          animation: fall 4s linear forwards;
-        }
-        @keyframes fall {
-          0% {
-            top: 0;
-            transform: rotate(0deg);
-          }
-          100% {
-            top: 350px;
-            transform: rotate(360deg);
-          }
-        }
-        .animate-marquee {
-          display: inline-block;
-          white-space: nowrap;
-          animation: marquee 15s linear infinite;
-        }
-        @keyframes marquee {
-          0% {
-            transform: translateX(100%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
     </div>
   );
 }
