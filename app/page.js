@@ -62,7 +62,7 @@ const happyEndMessages = [
   "Maishuuu = 100% Happy yeeeey ^_^ ❤️",
 ];
 
-const objects = ["❤️", "💣", "🐱", "😻", "🌸", "🐾", "🍫", "🐶", "💕"];
+const objects = ["❤️", "💣", "🐱", "😻", "🌸", "🐾", "🍫", "🐶", "🐸", "🌹"];
 
 export default function MoodGame() {
   const [items, setItems] = useState([]);
