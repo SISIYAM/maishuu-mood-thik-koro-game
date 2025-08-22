@@ -249,7 +249,7 @@ export default function MoodGame() {
               <div
                 key={item.id}
                 onClick={() => catchItem(item.id, item.symbol)}
-                className={`absolute text-3xl sm:text-4xl cursor-pointer select-none animate-fall ${
+                className={`absolute text-5xl sm:text-6xl cursor-pointer select-none animate-fall transition-transform duration-200 hover:scale-125 ${
                   item.symbol === "💣" ? "text-red-600" : ""
                 }`}
                 style={{ left: `${item.x}%`, top: 0 }}
