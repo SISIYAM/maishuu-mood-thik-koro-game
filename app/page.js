@@ -67,7 +67,7 @@ export default function MoodGame() {
     bgmGain.current = audioContext.current.createGain();
     sfxGain.current = audioContext.current.createGain();
 
-    bgmGain.current.gain.value = 0.05; // BGM low
+    bgmGain.current.gain.value = 0.1; // BGM low
     sfxGain.current.gain.value = 1; // SFX high
 
     bgmGain.current.connect(audioContext.current.destination);
