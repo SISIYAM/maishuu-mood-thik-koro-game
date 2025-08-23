@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { motion } from "framer-motion";
-
 import GameOver from "@/components/GameOver";
 import HappyEnd from "@/components/HappyEnd";
 import FunnySection from "@/components/FunnySection";
@@ -19,7 +17,10 @@ const funnyTexts = [
 ];
 
 const gameMessages = [
-  // (same as before)
+  "ওহ! ভালো লাগছে ধরে রাখতে ❤️",
+  "মজা লাগছে frrr 😻",
+  "Catch করতে পারলে আরও খুশি! 🎉",
+  "Awesome! Keep going 😎",
 ];
 
 const happyEndMessages = [
@@ -50,6 +51,22 @@ export default function MoodGame() {
 
   const intervalRef = useRef(null);
 
+  // Sounds using Audio API
+  const catchSound = useRef(null);
+  const bombSound = useRef(null);
+  const clickSound = useRef(null);
+  const bgmSound = useRef(null);
+
+  useEffect(() => {
+    // Initialize sounds
+    catchSound.current = new Audio("/sounds/catch.mp3");
+    bombSound.current = new Audio("/sounds/bomb.mp3");
+    clickSound.current = new Audio("/sounds/click.mp3");
+    bgmSound.current = new Audio("/sounds/bgm-1.mp3");
+    bgmSound.current.loop = true;
+    bgmSound.current.volume = 0.2;
+  }, []);
+
   // rotate bottom text
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,6 +78,9 @@ export default function MoodGame() {
   // generate falling items
   useEffect(() => {
     if (gameOver || happyEnd || !gameStarted) return;
+
+    // start bgm
+    if (bgmSound.current) bgmSound.current.play();
 
     let intervalTime = 1000;
     let fallDuration = 4000;
@@ -117,23 +137,28 @@ export default function MoodGame() {
       case "❤️":
         points = 5;
         setScore((prev) => prev + points);
+        catchSound.current?.play();
         break;
       case "🌹":
         points = 10;
         setScore((prev) => prev + points);
+        catchSound.current?.play();
         break;
       case "🐸":
         points = -1;
         type = "negative";
         setScore((prev) => (prev + points >= 0 ? prev + points : 0));
+        clickSound.current?.play();
         break;
       case "💣":
         type = "bomb";
         points = 0;
+        bombSound.current?.play();
         break;
       default:
         points = 1;
         setScore((prev) => prev + points);
+        catchSound.current?.play();
     }
 
     setMessage(
@@ -165,6 +190,10 @@ export default function MoodGame() {
     setMessage("");
     setFunnyMsg("");
     setShowFunnySection(false);
+
+    // stop bgm
+    bgmSound.current?.pause();
+    bgmSound.current.currentTime = 0;
   };
 
   const handleHappyEnd = () => {
@@ -173,6 +202,10 @@ export default function MoodGame() {
     setHappyEnd(true);
     setItems([]);
     setMessage("");
+
+    // stop bgm
+    bgmSound.current?.pause();
+    bgmSound.current.currentTime = 0;
   };
 
   return (
@@ -184,25 +217,33 @@ export default function MoodGame() {
       {!gameStarted && !gameOver && !happyEnd ? (
         <>
           <Instruction setGameStarted={setGameStarted} />
-          {/* Floating Hearts */}
           <FloatingHeart />
         </>
       ) : gameOver ? (
-        <GameOver
-          score={score}
-          handleHappyEnd={handleHappyEnd}
-          restartGame={restartGame}
-          gameoverMessage={message}
-        />
+        <>
+          <GameOver
+            score={score}
+            handleHappyEnd={handleHappyEnd}
+            restartGame={restartGame}
+            gameoverMessage={message}
+          />
+          <FloatingHeart />
+        </>
       ) : happyEnd && !showFunnySection ? (
-        <HappyEnd
-          happyMessage={happyMessage}
-          restartGame={restartGame}
-          setFunnyMsg={setFunnyMsg}
-          setShowFunnySection={setShowFunnySection}
-        />
+        <>
+          <HappyEnd
+            happyMessage={happyMessage}
+            restartGame={restartGame}
+            setFunnyMsg={setFunnyMsg}
+            setShowFunnySection={setShowFunnySection}
+          />
+          <FloatingHeart />
+        </>
       ) : showFunnySection ? (
-        <FunnySection funnyMsg={funnyMsg} restartGame={restartGame} />
+        <>
+          <FunnySection funnyMsg={funnyMsg} restartGame={restartGame} />
+          <FloatingHeart />
+        </>
       ) : (
         <>
           <p className="text-xl mb-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-full shadow-lg w-full max-w-md mx-auto">
@@ -223,7 +264,6 @@ export default function MoodGame() {
           </div>
         </>
       )}
-      {/* Credit Section */}
       <div className="absolute bottom-4 w-full text-center">
         <p className="credit-glow text-pink-700 text-lg font-bold animate-pulse">
           💖 This game is made only for you Maishuu to fix your mood ^_^ 💖
