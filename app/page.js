@@ -8,9 +8,6 @@ import GameContainer from "@/components/GameContainer";
 import "./style.css";
 import CaughtEffect from "@/components/CaughtEffect";
 
-const rejectMessage =
-  "কেনো খেলবা না? এত কষ্ট করেছি তোমার জন্য game বানিয়েছি, আর তুমি এমন করলা! হাইরে! 😠";
-
 const funnyTexts = [
   "আমি জানি আমি একটু বলদ, তাও মুড ঠিক করো huh frr :( 😓",
   "Maishuuu, মুড অন না হলে আমি system format করব 🔥",

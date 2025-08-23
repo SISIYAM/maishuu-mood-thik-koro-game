@@ -17,7 +17,7 @@ function FunnySection({ funnyMsg, restartGame }) {
       <div className="flex flex-col sm:flex-row gap-6 mt-6 w-full justify-center relative">
         <button
           onClick={restartGame}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl text-lg font-semibold w-full sm:w-auto transition-transform duration-200 hover:scale-105"
+          className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl text-lg font-semibold w-full sm:w-auto transition-transform duration-200 hover:scale-105"
         >
           আচ্ছা খেলবো 😁
         </button>

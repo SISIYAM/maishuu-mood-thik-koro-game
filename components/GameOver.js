@@ -15,13 +15,13 @@ function GameOver({ score, handleHappyEnd, restartGame, gameoverMessage }) {
       <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
         <button
           onClick={handleHappyEnd}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
+          className="cursor-pointer bg-green-500 hover:bg-green-600  text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
         >
           হ্যাঁ মুড ভালো করেছি 😄
         </button>
         <button
           onClick={restartGame}
-          className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
+          className="cursor-pointer bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg shadow-md w-full sm:w-auto"
         >
           না, এখনো হয়নি 😒
         </button>
