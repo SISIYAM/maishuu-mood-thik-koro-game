@@ -57,6 +57,7 @@ export default function MoodGame() {
   });
 
   const intervalRef = useRef(null);
+  const fallDurationRef = useRef(4000); // ✅ persist fall speed
 
   // Web Audio API refs
   const audioContext = useRef(null);
@@ -100,12 +101,7 @@ export default function MoodGame() {
 
     Promise.all(
       Object.entries(audioFiles).map(([name, url]) => loadAudio(name, url))
-    )
-      .then(() => {
-        // // Play allTimeBgm automatically (works on user interaction in mobile)
-        // playSound("allTimeBgm", true);
-      })
-      .catch(console.error);
+    ).catch(console.error);
   }, []);
 
   // function to play any sound
@@ -120,14 +116,7 @@ export default function MoodGame() {
       source.loop = loop;
       source.connect(bgmGain.current);
       source.start(0);
-      // store ref to stop later
-      if (name === "bgm") bgmGain.current.currentSource?.stop();
-      if (name === "allTimeBgm") sfxGain.current.currentSource?.stop();
-      if (loop) {
-        // store current source to stop when switching music
-        if (name === "bgm") bgmGain.current.currentSource = source;
-        if (name === "allTimeBgm") bgmGain.current.currentSource = source;
-      }
+      if (loop) bgmGain.current.currentSource = source;
     } else {
       source.connect(sfxGain.current);
       source.start(0);
@@ -137,12 +126,10 @@ export default function MoodGame() {
   // handle switching music
   useEffect(() => {
     if (gameStarted) {
-      // stop allTimeBgm, play game BGM
       if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
       playSound("bgm", true);
     } else {
       if (!happyEnd && !gameOver) {
-        // stop game bgm
         if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
         playSound("allTimeBgm", true);
       }
@@ -151,7 +138,6 @@ export default function MoodGame() {
 
   useEffect(() => {
     if (gameOver || happyEnd) {
-      // stop game bgm
       if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
       playSound("allTimeBgm", true);
     }
@@ -165,12 +151,10 @@ export default function MoodGame() {
     return () => clearInterval(interval);
   }, []);
 
-  // generate falling items
   useEffect(() => {
     if (gameOver || happyEnd || !gameStarted) return;
 
     let intervalTime = 1000;
-    let fallDuration = 4000;
 
     const generateItem = () => {
       const id = Date.now();
@@ -179,25 +163,26 @@ export default function MoodGame() {
 
       setItems((prev) => [
         ...prev,
-        { id, x, symbol: randomObject, duration: fallDuration },
+        { id, x, symbol: randomObject, duration: fallDurationRef.current },
       ]);
 
       setTimeout(() => {
         setItems((prev) => {
           const item = prev.find((i) => i.id === id);
-          if (item && item.symbol === "❤️")
+          if (!item) return prev;
+          if (item.symbol === "❤️")
             setMissed((m) => ({ ...m, heart: m.heart + 1 }));
-          if (item && item.symbol === "🌹")
+          if (item.symbol === "🌹")
             setMissed((m) => ({ ...m, rose: m.rose + 1 }));
           return prev.filter((i) => i.id !== id);
         });
-      }, fallDuration);
+      }, fallDurationRef.current);
     };
 
     const interval = setInterval(() => {
       generateItem();
       if (intervalTime > 300) intervalTime -= 20;
-      if (fallDuration > 1500) fallDuration -= 50;
+      if (fallDurationRef.current > 1500) fallDurationRef.current -= 50;
     }, intervalTime);
 
     return () => clearInterval(interval);
@@ -247,7 +232,6 @@ export default function MoodGame() {
         playSound("catch");
     }
 
-    //  score update
     setScore((prevScore) => {
       const newScore =
         points < 0 ? Math.max(0, prevScore + points) : prevScore + points;
@@ -290,7 +274,6 @@ export default function MoodGame() {
     setFunnyMsg("");
     setShowFunnySection(false);
 
-    // stop bgm
     if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
     playSound("allTimeBgm", true);
   };
@@ -305,12 +288,13 @@ export default function MoodGame() {
     if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
     playSound("allTimeBgm", true);
   };
+
   // Overlay to capture first tap/click
   if (!userInteracted) {
     return (
       <>
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-pink-200 z-50 p-6 text-center overflow-hidden">
-          {/* Animated floating hearts in background */}
+          {/* Animated floating hearts */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="animate-floatHeart absolute top-10 left-1/4 text-3xl">
               💖
@@ -323,23 +307,20 @@ export default function MoodGame() {
             </div>
           </div>
 
-          {/* Title */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-pink-700 drop-shadow-lg animate-bounce mb-6">
             হেই Maishuuuu, কেমন আছো :(( 😻
           </h1>
 
-          {/* Random love message as card */}
           <div className="mb-8 w-full max-w-md bg-gradient-to-r from-pink-500 to-pink-700 p-6 rounded-3xl shadow-2xl animate-pulse drop-shadow-lg">
             <p className="text-xl sm:text-2xl md:text-3xl text-white font-semibold text-center">
               {loveMessage}
             </p>
           </div>
 
-          {/* Start button in Bangla with pink/purple gradient */}
           <button
             onClick={() => {
-              audioContext.current?.resume(); // resume audio context
-              playSound("allTimeBgm", true); // start all-time BGM
+              audioContext.current?.resume();
+              playSound("allTimeBgm", true);
               setUserInteracted(true);
             }}
             className="cursor-pointer bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-3xl shadow-2xl text-lg sm:text-xl font-bold hover:scale-105 hover:shadow-pink-400/80 transition-transform duration-300"
