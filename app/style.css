@@ -1,16 +1,21 @@
 .animate-fall {
-  animation: fall 4s linear forwards;
+  position: absolute;
+  animation-name: fall;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 }
+
 @keyframes fall {
   0% {
     top: 0;
     transform: rotate(0deg);
   }
   100% {
-    top: 350px;
+    top: 100%; /* will fill container dynamically */
     transform: rotate(360deg);
   }
 }
+
 .animate-marquee {
   display: inline-block;
   white-space: nowrap;
