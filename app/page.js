@@ -181,7 +181,7 @@ export default function MoodGame() {
       </h1>
 
       {!gameStarted && !gameOver && !happyEnd ? (
-        <Instruction />
+        <Instruction setGameStarted={setGameStarted} />
       ) : gameOver ? (
         <GameOver
           score={score}
