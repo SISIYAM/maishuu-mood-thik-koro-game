@@ -204,7 +204,7 @@ export default function MoodGame() {
   }, [gameOver, happyEnd, gameStarted]);
 
   useEffect(() => {
-    if (missed.heart >= 10 || missed.rose >= 8) setGameOver(true);
+    if (missed.heart >= 10 && missed.rose >= 8) setGameOver(true);
   }, [missed]);
 
   useEffect(() => {
@@ -226,18 +226,15 @@ export default function MoodGame() {
     switch (symbol) {
       case "❤️":
         points = 5;
-        setScore((prev) => prev + points);
         playSound("heart");
         break;
       case "🌹":
         points = 10;
-        setScore((prev) => prev + points);
         playSound("rose");
         break;
       case "🐸":
         points = -1;
         type = "negative";
-        setScore((prev) => (prev + points >= 0 ? prev + points : 0));
         playSound("click");
         break;
       case "💣":
@@ -247,15 +244,14 @@ export default function MoodGame() {
         break;
       default:
         points = 1;
-        setScore((prev) => prev + points);
         playSound("catch");
     }
 
+    //  score update
     setScore((prevScore) => {
       const newScore =
         points < 0 ? Math.max(0, prevScore + points) : prevScore + points;
 
-      // check and update high score here
       if (newScore > highScore) {
         setHighScore(newScore);
         localStorage.setItem("highScore", newScore);
