@@ -33,11 +33,11 @@ export default function MoodGame() {
 
   // Sounds using Audio API
   const catchSound = useRef(null);
-  const heartSound = useRef(null);
   const bombSound = useRef(null);
   const clickSound = useRef(null);
   const bgmSound = useRef(null);
   const allTimeBgmSound = useRef(null);
+  const heartSound = useRef(null);
   const roseSound = useRef(null);
 
   useEffect(() => {
@@ -52,21 +52,20 @@ export default function MoodGame() {
     bgmSound.current.loop = true;
     bgmSound.current.volume = 0.05;
 
+    // All time background music
     allTimeBgmSound.current = new Audio("/sounds/bgm-2.mp3");
     allTimeBgmSound.current.loop = true;
     allTimeBgmSound.current.volume = 0.05;
-
-    const enableAudio = () => {
-      allTimeBgmSound.current.play().catch((err) => console.log(err));
-      document.removeEventListener("click", enableAudio);
-    };
-
-    document.addEventListener("click", enableAudio);
+    allTimeBgmSound.current
+      .play()
+      .catch(() =>
+        console.log("Autoplay blocked: will start on user interaction.")
+      );
 
     return () => {
+      // cleanup
       bgmSound.current?.pause();
       allTimeBgmSound.current?.pause();
-      document.removeEventListener("click", enableAudio);
     };
   }, []);
 
