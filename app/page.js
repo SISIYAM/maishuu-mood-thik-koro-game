@@ -31,63 +31,101 @@ export default function MoodGame() {
 
   const intervalRef = useRef(null);
 
-  // Sounds using Audio API
-  const catchSound = useRef(null);
-  const bombSound = useRef(null);
-  const clickSound = useRef(null);
-  const bgmSound = useRef(null);
-  const allTimeBgmSound = useRef(null);
-  const heartSound = useRef(null);
-  const roseSound = useRef(null);
+  // Web Audio API refs
+  const audioContext = useRef(null);
+  const bgmGain = useRef(null);
+  const sfxGain = useRef(null);
+
+  const audioBuffers = useRef({}); // store loaded audio buffers
 
   useEffect(() => {
-    // Initialize sounds
-    catchSound.current = new Audio("/sounds/catch.mp3");
-    bombSound.current = new Audio("/sounds/bomb.mp3");
-    clickSound.current = new Audio("/sounds/click.mp3");
-    heartSound.current = new Audio("/sounds/catch-2.mp3");
-    roseSound.current = new Audio("/sounds/catch-4.mp3");
-    bgmSound.current = new Audio("/sounds/bgm-1.mp3");
-    bgmSound.current.loop = true;
-    bgmSound.current.volume = 0.05;
+    audioContext.current = new (window.AudioContext ||
+      window.webkitAudioContext)();
 
-    // All time background music
-    allTimeBgmSound.current = new Audio("/sounds/bgm-2.mp3");
-    allTimeBgmSound.current.loop = true;
-    allTimeBgmSound.current.volume = 0.05;
-    allTimeBgmSound.current
-      .play()
-      .catch(() =>
-        console.log("Autoplay blocked: will start on user interaction.")
-      );
+    // Gain nodes
+    bgmGain.current = audioContext.current.createGain();
+    sfxGain.current = audioContext.current.createGain();
 
-    return () => {
-      // cleanup
-      bgmSound.current?.pause();
-      allTimeBgmSound.current?.pause();
+    bgmGain.current.gain.value = 0.05; // BGM low
+    sfxGain.current.gain.value = 1; // SFX high
+
+    bgmGain.current.connect(audioContext.current.destination);
+    sfxGain.current.connect(audioContext.current.destination);
+
+    // Load all audio files
+    const audioFiles = {
+      catch: "/sounds/catch.mp3",
+      bomb: "/sounds/bomb.mp3",
+      click: "/sounds/click.mp3",
+      heart: "/sounds/catch-2.mp3",
+      rose: "/sounds/catch-4.mp3",
+      bgm: "/sounds/bgm-1.mp3",
+      allTimeBgm: "/sounds/bgm-2.mp3",
     };
+
+    const loadAudio = async (name, url) => {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = await audioContext.current.decodeAudioData(arrayBuffer);
+      audioBuffers.current[name] = buffer;
+    };
+
+    Promise.all(
+      Object.entries(audioFiles).map(([name, url]) => loadAudio(name, url))
+    )
+      .then(() => {
+        // Play allTimeBgm automatically (works on user interaction in mobile)
+        playSound("allTimeBgm", true);
+      })
+      .catch(console.error);
   }, []);
 
-  // handle switching music when game starts or ends
+  // function to play any sound
+  const playSound = (name, loop = false) => {
+    if (!audioBuffers.current[name]) return;
+
+    const source = audioContext.current.createBufferSource();
+    source.buffer = audioBuffers.current[name];
+
+    // connect to correct gain
+    if (name === "bgm" || name === "allTimeBgm") {
+      source.loop = loop;
+      source.connect(bgmGain.current);
+      source.start(0);
+      // store ref to stop later
+      if (name === "bgm") bgmGain.current.currentSource?.stop();
+      if (name === "allTimeBgm") sfxGain.current.currentSource?.stop();
+      if (loop) {
+        // store current source to stop when switching music
+        if (name === "bgm") bgmGain.current.currentSource = source;
+        if (name === "allTimeBgm") bgmGain.current.currentSource = source;
+      }
+    } else {
+      source.connect(sfxGain.current);
+      source.start(0);
+    }
+  };
+
+  // handle switching music
   useEffect(() => {
     if (gameStarted) {
-      // stop allTime BGM and play game BGM
-      allTimeBgmSound.current?.pause();
-      bgmSound.current.currentTime = 0;
-      bgmSound.current.play();
+      // stop allTimeBgm, play game BGM
+      if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
+      playSound("bgm", true);
     } else {
-      // if game is not started (after game over or restart) resume allTime BGM
       if (!happyEnd && !gameOver) {
-        allTimeBgmSound.current?.play();
+        // stop game bgm
+        if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
+        playSound("allTimeBgm", true);
       }
     }
   }, [gameStarted]);
 
-  // when game over or happy end, stop game bgm and play allTime bgm
   useEffect(() => {
     if (gameOver || happyEnd) {
-      bgmSound.current?.pause();
-      allTimeBgmSound.current?.play();
+      // stop game bgm
+      if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
+      playSound("allTimeBgm", true);
     }
   }, [gameOver, happyEnd]);
 
@@ -158,28 +196,28 @@ export default function MoodGame() {
       case "❤️":
         points = 5;
         setScore((prev) => prev + points);
-        heartSound.current?.play();
+        playSound("heart");
         break;
       case "🌹":
         points = 10;
         setScore((prev) => prev + points);
-        roseSound.current?.play();
+        playSound("rose");
         break;
       case "🐸":
         points = -1;
         type = "negative";
         setScore((prev) => (prev + points >= 0 ? prev + points : 0));
-        clickSound.current?.play();
+        playSound("click");
         break;
       case "💣":
         type = "bomb";
         points = 0;
-        bombSound.current?.play();
+        playSound("bomb");
         break;
       default:
         points = 1;
         setScore((prev) => prev + points);
-        catchSound.current?.play();
+        playSound("catch");
     }
 
     setMessage(
@@ -212,10 +250,9 @@ export default function MoodGame() {
     setFunnyMsg("");
     setShowFunnySection(false);
 
-    bgmSound.current?.pause();
-    bgmSound.current.currentTime = 0;
-
-    allTimeBgmSound.current?.play();
+    // stop bgm
+    if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
+    playSound("allTimeBgm", true);
   };
 
   const handleHappyEnd = () => {
@@ -225,10 +262,8 @@ export default function MoodGame() {
     setItems([]);
     setMessage("");
 
-    bgmSound.current?.pause();
-    bgmSound.current.currentTime = 0;
-
-    allTimeBgmSound.current?.play();
+    if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
+    playSound("allTimeBgm", true);
   };
 
   return (
