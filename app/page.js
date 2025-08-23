@@ -64,7 +64,7 @@ export default function MoodGame() {
     clickSound.current = new Audio("/sounds/click.mp3");
     bgmSound.current = new Audio("/sounds/bgm-1.mp3");
     bgmSound.current.loop = true;
-    bgmSound.current.volume = 0.2;
+    bgmSound.current.volume = 0.1;
   }, []);
 
   // rotate bottom text
