@@ -56,6 +56,12 @@ function Instruction({ setGameStarted }) {
         <li className="flex items-center gap-1 text-xs">
           ❤️ <b className="text-red-600">১০ বার মিস করলে → গেম ওভার</b>
         </li>
+        <li className="flex items-center gap-1 text-xs">
+          ❤️ <b className="text-red-600">১০ বার মিস করলে → গেম ওভার</b>
+        </li>
+        <li className="flex items-center gap-1 text-xs">
+          🌹 <b className="text-red-600">৮ বার মিস করলে → গেম ওভার</b>
+        </li>
       </ul>
 
       {/* How to Play */}

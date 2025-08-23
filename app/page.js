@@ -23,7 +23,7 @@ export default function MoodGame() {
   const [score, setScore] = useState(0);
   const [message, setMessage] = useState("");
   const [bottomText, setBottomText] = useState(funnyTexts[0]);
-  const [missed, setMissed] = useState(0);
+  const [missed, setMissed] = useState({ heart: 0, rose: 0 });
   const [gameOver, setGameOver] = useState(false);
   const [happyEnd, setHappyEnd] = useState(false);
   const [funnyMsg, setFunnyMsg] = useState("");
@@ -178,7 +178,10 @@ export default function MoodGame() {
       setTimeout(() => {
         setItems((prev) => {
           const item = prev.find((i) => i.id === id);
-          if (item && item.symbol === "❤️") setMissed((m) => m + 1);
+          if (item && item.symbol === "❤️")
+            setMissed((m) => ({ ...m, heart: m.heart + 1 }));
+          if (item && item.symbol === "🌹")
+            setMissed((m) => ({ ...m, rose: m.rose + 1 }));
           return prev.filter((i) => i.id !== id);
         });
       }, fallDuration);
@@ -194,7 +197,7 @@ export default function MoodGame() {
   }, [gameOver, happyEnd, gameStarted]);
 
   useEffect(() => {
-    if (missed >= 10) setGameOver(true);
+    if (missed.heart >= 10 || missed.rose >= 8) setGameOver(true);
   }, [missed]);
 
   useEffect(() => {
@@ -265,7 +268,7 @@ export default function MoodGame() {
     setHappyEnd(false);
     setGameStarted(false);
     setScore(0);
-    setMissed(0);
+    setMissed({ heart: 0, rose: 0 });
     setItems([]);
     setMessage("");
     setFunnyMsg("");
@@ -378,7 +381,7 @@ export default function MoodGame() {
         <>
           <p className="text-xl mb-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-full shadow-lg w-full max-w-md mx-auto">
             Score: <span className="font-bold">{score}</span> | Missed ❤️:{" "}
-            {missed}/10
+            {missed.heart}/10 | Missed 🌹: {missed.rose}/8
           </p>
           {message && (
             <p className="text-lg sm:text-xl font-semibold text-pink-900 mb-6 animate-bounce px-2">
