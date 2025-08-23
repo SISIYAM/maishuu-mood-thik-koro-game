@@ -33,6 +33,7 @@ export default function MoodGame() {
 
   // Sounds using Audio API
   const catchSound = useRef(null);
+  const heartSound = useRef(null);
   const bombSound = useRef(null);
   const clickSound = useRef(null);
   const bgmSound = useRef(null);
@@ -43,6 +44,7 @@ export default function MoodGame() {
     catchSound.current = new Audio("/sounds/catch.mp3");
     bombSound.current = new Audio("/sounds/bomb.mp3");
     clickSound.current = new Audio("/sounds/click.mp3");
+    heartSound.current = new Audio("/sounds/catch-2.mp3");
 
     bgmSound.current = new Audio("/sounds/bgm-1.mp3");
     bgmSound.current.loop = true;
@@ -155,7 +157,7 @@ export default function MoodGame() {
       case "❤️":
         points = 5;
         setScore((prev) => prev + points);
-        catchSound.current?.play();
+        heartSound.current?.play();
         break;
       case "🌹":
         points = 10;
