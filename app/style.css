@@ -16,6 +16,9 @@
   white-space: nowrap;
   animation: marquee 15s linear infinite;
 }
+.credit-glow {
+  text-shadow: 0 0 10px #ff80bf, 0 0 20px #ff4da6, 0 0 30px #ff1a8c;
+}
 @keyframes marquee {
   0% {
     transform: translateX(100%);

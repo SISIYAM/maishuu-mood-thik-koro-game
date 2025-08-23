@@ -7,7 +7,7 @@ function GameOver({ score, handleHappyEnd, restartGame, gameoverMessage }) {
         Game Over 😭
       </h2>
       <p className="text-lg mb-6 text-gray-700 animate-bounce">
-        {gameoverMessage}!
+        {gameoverMessage}
       </p>
       <p className="text-lg mb-6 text-gray-700 animate-bounce">
         তুমি {score} পয়েন্ট পেয়েছ!

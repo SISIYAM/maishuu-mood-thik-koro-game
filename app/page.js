@@ -9,6 +9,7 @@ import GameContainer from "@/components/GameContainer";
 import "./style.css";
 import CaughtEffect from "@/components/CaughtEffect";
 import Instruction from "@/components/Instruction";
+import FloatingHeart from "@/components/FloatingHeart";
 
 const funnyTexts = [
   "আমি জানি আমি একটু বলদ, তাও মুড ঠিক করো huh frr :( 😓",
@@ -176,12 +177,16 @@ export default function MoodGame() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 to-pink-300 text-center relative overflow-hidden px-2 md:px-0">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-pink-700 drop-shadow-lg animate-bounce mb-6 sm:mb-10">
+      <h1 className="credit-glow text-2xl sm:text-3xl md:text-4xl font-extrabold text-pink-700 drop-shadow-lg animate-bounce mb-6 sm:mb-10">
         মুড ভালো করো Maishuuu 😻
       </h1>
 
       {!gameStarted && !gameOver && !happyEnd ? (
-        <Instruction setGameStarted={setGameStarted} />
+        <>
+          <Instruction setGameStarted={setGameStarted} />
+          {/* Floating Hearts */}
+          <FloatingHeart />
+        </>
       ) : gameOver ? (
         <GameOver
           score={score}
@@ -218,6 +223,12 @@ export default function MoodGame() {
           </div>
         </>
       )}
+      {/* Credit Section */}
+      <div className="absolute bottom-4 w-full text-center">
+        <p className="credit-glow text-pink-700 text-lg font-bold animate-pulse">
+          💖 This game is made only for you Maishuu to fix your mood ^_^ 💖
+        </p>
+      </div>
     </div>
   );
 }
