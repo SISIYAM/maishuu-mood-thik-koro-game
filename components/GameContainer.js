@@ -3,7 +3,7 @@ import React, { useState } from "react";
 export default function GameContainer({ items, catchItem }) {
   const [poppedItems, setPoppedItems] = useState([]);
 
-  const handleClick = (id, symbol) => {
+  const handlePop = (id, symbol) => {
     // mark as popped
     setPoppedItems((prev) => [...prev, id]);
 
@@ -18,10 +18,12 @@ export default function GameContainer({ items, catchItem }) {
     <div className="relative w-full max-w-lg h-[350px] sm:h-[400px] bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-pink-400">
       {items.map((item) => {
         const isPopped = poppedItems.includes(item.id);
+
         return (
           <div
             key={item.id}
-            onClick={() => handleClick(item.id, item.symbol)}
+            onClick={() => handlePop(item.id, item.symbol)}
+            onTouchStart={() => handlePop(item.id, item.symbol)}
             className={`absolute cursor-pointer select-none ${
               item.symbol === "💣" ? "text-red-600" : ""
             } animate-fall transition-transform duration-300 
