@@ -7,7 +7,7 @@ function HappyEnd({
   setShowFunnySection,
 }) {
   const rejectMessage =
-    "কেনো খেলবা না? এত কষ্ট করেছি তোমার জন্য game বানাইলাম, আর তুমি এমন করলা! hyreee :((( ughhh";
+    "কেনো খেলবা না? এত কষ্ট করে তোমার জন্য game বানাইলাম, আর তুমি এমন করলা! hyreee :((( ughhh";
 
   return (
     <div className="flex flex-col items-center justify-center bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-md">
