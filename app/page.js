@@ -8,7 +8,12 @@ import "./style.css";
 import CaughtEffect from "@/components/CaughtEffect";
 import Instruction from "@/components/Instruction";
 import FloatingHeart from "@/components/FloatingHeart";
-import { funnyTexts, gameMessages, happyEndMessages } from "@/utils/utils";
+import {
+  funnyTexts,
+  gameMessages,
+  happyEndMessages,
+  loveMessages,
+} from "@/utils/utils";
 
 const objects = ["❤️", "💣", "🐱", "😻", "🌸", "🐾", "🍫", "🐶", "🐸", "🌹"];
 
@@ -29,6 +34,21 @@ export default function MoodGame() {
   const [caughtEffect, setCaughtEffect] = useState(null);
   const [effectId, setEffectId] = useState(0);
 
+  const [userInteracted, setUserInteracted] = useState(false);
+  const [loveMessage, setLoveMessage] = useState(
+    loveMessages[Math.floor(Math.random() * loveMessages.length)]
+  );
+
+  useEffect(() => {
+    if (userInteracted) return;
+    const interval = setInterval(() => {
+      setLoveMessage(
+        loveMessages[Math.floor(Math.random() * loveMessages.length)]
+      );
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [userInteracted]);
+
   const intervalRef = useRef(null);
 
   // Web Audio API refs
@@ -36,7 +56,8 @@ export default function MoodGame() {
   const bgmGain = useRef(null);
   const sfxGain = useRef(null);
 
-  const audioBuffers = useRef({}); // store loaded audio buffers
+  // store loaded audio buffers
+  const audioBuffers = useRef({});
 
   useEffect(() => {
     audioContext.current = new (window.AudioContext ||
@@ -74,8 +95,8 @@ export default function MoodGame() {
       Object.entries(audioFiles).map(([name, url]) => loadAudio(name, url))
     )
       .then(() => {
-        // Play allTimeBgm automatically (works on user interaction in mobile)
-        playSound("allTimeBgm", true);
+        // // Play allTimeBgm automatically (works on user interaction in mobile)
+        // playSound("allTimeBgm", true);
       })
       .catch(console.error);
   }, []);
@@ -265,6 +286,57 @@ export default function MoodGame() {
     if (bgmGain.current.currentSource) bgmGain.current.currentSource.stop();
     playSound("allTimeBgm", true);
   };
+  // Overlay to capture first tap/click
+  if (!userInteracted) {
+    return (
+      <>
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-pink-100 to-pink-200 z-50 p-6 text-center overflow-hidden">
+          {/* Animated floating hearts in background */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="animate-floatHeart absolute top-10 left-1/4 text-3xl">
+              💖
+            </div>
+            <div className="animate-floatHeart absolute top-20 right-1/3 text-4xl">
+              💌
+            </div>
+            <div className="animate-floatHeart absolute top-1/2 left-2/3 text-3xl">
+              🌸
+            </div>
+          </div>
+
+          {/* Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-pink-700 drop-shadow-lg animate-bounce mb-6">
+            হেই Maishuuuu, কেমন আছো :(( 😻
+          </h1>
+
+          {/* Random love message as card */}
+          <div className="mb-8 w-full max-w-md bg-gradient-to-r from-pink-500 to-pink-700 p-6 rounded-3xl shadow-2xl animate-pulse drop-shadow-lg">
+            <p className="text-xl sm:text-2xl md:text-3xl text-white font-semibold text-center">
+              {loveMessage}
+            </p>
+          </div>
+
+          {/* Start button in Bangla with pink/purple gradient */}
+          <button
+            onClick={() => {
+              audioContext.current?.resume(); // resume audio context
+              playSound("allTimeBgm", true); // start all-time BGM
+              setUserInteracted(true);
+            }}
+            className="cursor-pointer bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-3xl shadow-2xl text-lg sm:text-xl font-bold hover:scale-105 hover:shadow-pink-400/80 transition-transform duration-300"
+          >
+            দেখতে চাও না, সামনে কী আছে? তবে প্রেস করো huh 😖
+          </button>
+          <FloatingHeart />
+          <div className="absolute bottom-4 w-full text-center">
+            <p className="credit-glow text-pink-700 text-xl font-bold animate-pulse">
+              💖 This game is made only for you Maishuu to fix your mood ^_^ 💖
+            </p>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-pink-100 to-pink-300 text-center relative overflow-hidden px-2 md:px-0">
