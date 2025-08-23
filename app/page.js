@@ -50,7 +50,7 @@ export default function MoodGame() {
 
     bgmSound.current = new Audio("/sounds/bgm-1.mp3");
     bgmSound.current.loop = true;
-    bgmSound.current.volume = 0.05;
+    bgmSound.current.volume = 0.01;
 
     // All time background music
     allTimeBgmSound.current = new Audio("/sounds/bgm-2.mp3");
