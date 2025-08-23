@@ -222,6 +222,11 @@ export default function MoodGame() {
         type = "negative";
         playSound("click");
         break;
+      case "🐾":
+        points = -6;
+        type = "negative";
+        playSound("click");
+        break;
       case "💣":
         type = "bomb";
         points = 0;

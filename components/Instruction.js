@@ -50,6 +50,10 @@ function Instruction({ setGameStarted, highScore }) {
           <b className="text-red-600">-1 পয়েন্ট</b>
         </li>
         <li className="flex items-center gap-1">
+          <span className="text-green-600 text-lg">🐾</span> ধরলে{" "}
+          <b className="text-red-600">-6 পয়েন্ট</b>
+        </li>
+        <li className="flex items-center gap-1">
           <span className="text-black text-lg">💣</span> ধরলে{" "}
           <b className="text-red-700">গেম ওভার!</b>
         </li>
