@@ -53,9 +53,7 @@ function Instruction({ setGameStarted }) {
           <span className="text-black text-lg">💣</span> ধরলে{" "}
           <b className="text-red-700">গেম ওভার!</b>
         </li>
-        <li className="flex items-center gap-1 text-xs">
-          ❤️ <b className="text-red-600">১০ বার মিস করলে → গেম ওভার</b>
-        </li>
+
         <li className="flex items-center gap-1 text-xs">
           ❤️ <b className="text-red-600">১০ বার মিস করলে → গেম ওভার</b>
         </li>
