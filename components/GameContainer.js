@@ -13,7 +13,7 @@ export default function GameContainer({ items, catchItem }) {
           style={{
             left: `${item.x}%`,
             top: 0,
-            fontSize: window.innerWidth < 640 ? "3rem" : "4rem",
+            fontSize: window.innerWidth < 640 ? "4rem" : "4rem",
             transformOrigin: "center center",
             animationDuration: `${item.duration}ms`,
           }}
