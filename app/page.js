@@ -48,22 +48,23 @@ export default function MoodGame() {
 
     bgmSound.current = new Audio("/sounds/bgm-1.mp3");
     bgmSound.current.loop = true;
-    bgmSound.current.volume = 0.15;
+    bgmSound.current.volume = 0.05;
 
-    // All time background music
     allTimeBgmSound.current = new Audio("/sounds/bgm-2.mp3");
     allTimeBgmSound.current.loop = true;
     allTimeBgmSound.current.volume = 0.05;
-    allTimeBgmSound.current
-      .play()
-      .catch(() =>
-        console.log("Autoplay blocked: will start on user interaction.")
-      );
+
+    const enableAudio = () => {
+      allTimeBgmSound.current.play().catch((err) => console.log(err));
+      document.removeEventListener("click", enableAudio);
+    };
+
+    document.addEventListener("click", enableAudio);
 
     return () => {
-      // cleanup
       bgmSound.current?.pause();
       allTimeBgmSound.current?.pause();
+      document.removeEventListener("click", enableAudio);
     };
   }, []);
 
