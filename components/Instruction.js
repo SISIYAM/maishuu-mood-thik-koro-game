@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import React from "react";
 
-function Instruction({ setGameStarted }) {
+function Instruction({ setGameStarted, highScore }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -71,7 +71,9 @@ function Instruction({ setGameStarted }) {
           <span className="text-gray-600">দ্রুত ধরতে হবে! 😉</span>
         </p>
       </div>
-
+      <p className="text-lg mb-6 font-semibold text-gray-800 text-center mt-4">
+        High Score: <span className="font-bold">{highScore}</span>
+      </p>
       {/* Buttons */}
       <div className="flex justify-center gap-4 mt-3">
         <motion.button

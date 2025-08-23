@@ -1,6 +1,12 @@
 import React from "react";
 
-function GameOver({ score, handleHappyEnd, restartGame, gameoverMessage }) {
+function GameOver({
+  score,
+  handleHappyEnd,
+  restartGame,
+  gameoverMessage,
+  highScore,
+}) {
   return (
     <div className="flex flex-col items-center justify-center bg-white rounded-2xl shadow-2xl p-6 z-10 w-full max-w-md">
       <h2 className="text-2xl font-bold text-red-500 mb-4 animate-bounce">
@@ -9,9 +15,13 @@ function GameOver({ score, handleHappyEnd, restartGame, gameoverMessage }) {
       <p className="text-lg mb-6 text-gray-700 animate-bounce">
         {gameoverMessage}
       </p>
-      <p className="text-lg mb-6 text-gray-700 animate-bounce">
+      <p className="text-lg mb-3 text-gray-700 animate-bounce">
         তুমি {score} পয়েন্ট পেয়েছ!
+        <p className="text-lg mb-6 font-semibold text-gray-800 text-center mt-4">
+          High Score: <span className="font-bold">{highScore}</span>
+        </p>
       </p>
+
       <div className="flex flex-col sm:flex-row gap-4 w-full justify-center">
         <button
           onClick={handleHappyEnd}

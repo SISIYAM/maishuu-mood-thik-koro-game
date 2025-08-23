@@ -49,6 +49,13 @@ export default function MoodGame() {
     return () => clearInterval(interval);
   }, [userInteracted]);
 
+  const [highScore, setHighScore] = useState(() => {
+    if (typeof window !== "undefined") {
+      return parseInt(localStorage.getItem("highScore")) || 0;
+    }
+    return 0;
+  });
+
   const intervalRef = useRef(null);
 
   // Web Audio API refs
@@ -244,6 +251,19 @@ export default function MoodGame() {
         playSound("catch");
     }
 
+    setScore((prevScore) => {
+      const newScore =
+        points < 0 ? Math.max(0, prevScore + points) : prevScore + points;
+
+      // check and update high score here
+      if (newScore > highScore) {
+        setHighScore(newScore);
+        localStorage.setItem("highScore", newScore);
+      }
+
+      return newScore;
+    });
+
     setMessage(
       symbol === "💣"
         ? "💥 বোম্ব! হুহ, গেম শেষ হবে... 😭"
@@ -349,7 +369,7 @@ export default function MoodGame() {
 
       {!gameStarted && !gameOver && !happyEnd ? (
         <>
-          <Instruction setGameStarted={setGameStarted} />
+          <Instruction setGameStarted={setGameStarted} highScore={highScore} />
           <FloatingHeart />
         </>
       ) : gameOver ? (
@@ -359,6 +379,7 @@ export default function MoodGame() {
             handleHappyEnd={handleHappyEnd}
             restartGame={restartGame}
             gameoverMessage={message}
+            highScore={highScore}
           />
           <FloatingHeart />
         </>
