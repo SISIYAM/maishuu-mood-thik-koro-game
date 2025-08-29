@@ -14,6 +14,7 @@ import {
   happyEndMessages,
   loveMessages,
 } from "@/utils/utils";
+import LoginForm from "@/components/LoginForm";
 
 const objects = ["❤️", "💣", "🐱", "😻", "🌸", "🐾", "🍫", "🐶", "🐸", "🌹"];
 
@@ -38,6 +39,13 @@ export default function MoodGame() {
   const [loveMessage, setLoveMessage] = useState(
     loveMessages[Math.floor(Math.random() * loveMessages.length)]
   );
+
+  // user login
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const saved = localStorage.getItem("user");
+    if (saved) setUser(JSON.parse(saved));
+  }, []);
 
   useEffect(() => {
     if (userInteracted) return;
@@ -294,6 +302,13 @@ export default function MoodGame() {
     playSound("allTimeBgm", true);
   };
 
+  if (!user) {
+    return (
+      <div className="w-full h-screen bg-white flex flex-col justify-center p-8">
+        <LoginForm onLogin={setUser} />
+      </div>
+    );
+  }
   // Overlay to capture first tap/click
   if (!userInteracted) {
     return (
