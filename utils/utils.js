@@ -74,3 +74,14 @@ export const setLeaderboard = async (userId, score) => {
     return { error: "Failed to update leaderboard" };
   }
 };
+
+/// get global high score
+export const getGlobalHighScore = async () => {
+  try {
+    const response = await axios.get("/api/leaderboard");
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update leaderboard:", error);
+    return { error: "Failed to update leaderboard" };
+  }
+};
