@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const funnyTexts = [
   "আমি জানি আমি একটু বলদ, তাও মুড ঠিক করো huh frr :( 😓",
   "Maishuuu, মুড অন না হলে আমি system format করব 🔥",
@@ -60,3 +62,15 @@ export const loveMessages = [
   "তোমার জন্য কিছু বিশেষ বানিয়েছি ^_^ 😻",
   "তুমি হাসলে আমি খুশি frrr 😊",
 ];
+
+// set leaderboard on server
+export const setLeaderboard = async (userId, score) => {
+  try {
+    const response = await axios.post("/api/leaderboard", { userId, score });
+
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update leaderboard:", error);
+    return { error: "Failed to update leaderboard" };
+  }
+};

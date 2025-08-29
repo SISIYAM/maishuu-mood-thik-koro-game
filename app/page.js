@@ -13,6 +13,7 @@ import {
   gameMessages,
   happyEndMessages,
   loveMessages,
+  setLeaderboard,
 } from "@/utils/utils";
 import LoginForm from "@/components/LoginForm";
 
@@ -65,7 +66,7 @@ export default function MoodGame() {
   });
 
   const intervalRef = useRef(null);
-  const fallDurationRef = useRef(4000); // ✅ persist fall speed
+  const fallDurationRef = useRef(4000);
 
   // Web Audio API refs
   const audioContext = useRef(null);
@@ -252,6 +253,8 @@ export default function MoodGame() {
       if (newScore > highScore) {
         setHighScore(newScore);
         localStorage.setItem("highScore", newScore);
+        // update on server
+        setLeaderboard(user._id, newScore);
       }
 
       return newScore;
