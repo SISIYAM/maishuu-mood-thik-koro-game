@@ -70,7 +70,7 @@ export default function LoginForm({ onLogin }) {
               <motion.input
                 key="nameInput"
                 type="text"
-                placeholder="Full Name"
+                placeholder="Name"
                 className="w-full p-3 rounded-lg border border-pink-300 text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-400"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
