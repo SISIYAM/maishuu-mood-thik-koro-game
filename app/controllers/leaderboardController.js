@@ -21,12 +21,25 @@ export async function updateScore(userId, score) {
 export async function getLeaderboard() {
   await connectDB();
   try {
-    const leaderboard = await User.find({}, "name highScore")
+    const leaderboard = await User.find({}, "_id name highScore")
       .sort({ highScore: -1 })
       .limit(10);
 
     return { status: 200, data: leaderboard };
   } catch (error) {
     return { status: 500, data: { error: "Failed to fetch leaderboard" } };
+  }
+}
+
+export async function getFullLeaderboard() {
+  await connectDB();
+  try {
+    const leaderboard = await User.find({}, "_id name highScore").sort({
+      highScore: -1,
+    });
+
+    return { status: 200, data: leaderboard };
+  } catch (error) {
+    return { status: 500, data: { error: "Failed to fetch full leaderboard" } };
   }
 }

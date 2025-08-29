@@ -1,7 +1,16 @@
 import { motion } from "framer-motion";
+import { Crown } from "lucide-react";
 import React from "react";
 
-function Instruction({ setGameStarted, highScore }) {
+function Instruction({
+  setGameStarted,
+  highScore,
+  setOnViewLeaderboard,
+  topThree = [],
+  currentUserId,
+  globalHighScore,
+  isCurrentUserHighScorer,
+}) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -75,11 +84,67 @@ function Instruction({ setGameStarted, highScore }) {
           <span className="text-gray-600">দ্রুত ধরতে হবে! 😉</span>
         </p>
       </div>
-      <p className="text-lg mb-6 font-semibold text-gray-800 text-center mt-4">
+
+      {/* High Score */}
+      <p className="text-lg mb-4 font-semibold text-gray-800 text-center mt-4">
         High Score: <span className="font-bold">{highScore}</span>
       </p>
+
+      {/* Top 3 Leaderboard */}
+
+      <div className="flex flex-col gap-3 mb-6">
+        {topThree.map((player, idx) => {
+          const isCurrentUser = player.userId === currentUserId;
+          return (
+            <motion.div
+              key={player._id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.2 }}
+              className={`border-2 rounded-xl px-5 py-3 flex items-center justify-between shadow-inner
+          ${
+            isCurrentUser
+              ? "border-green-500 bg-green-100"
+              : "border-yellow-400 bg-yellow-100"
+          }
+        `}
+            >
+              {/* Rank + Name */}
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-gray-800 text-lg">
+                  #{idx + 1}
+                </span>
+                <p
+                  className={`font-semibold text-base ${
+                    isCurrentUser ? "text-green-700" : "text-yellow-700"
+                  }`}
+                >
+                  {player.userName || "Unknown"}
+                  {isCurrentUser && " 👑 You!"}
+                </p>
+              </div>
+
+              {/* Score */}
+              <motion.span
+                animate={
+                  isCurrentUser
+                    ? { scale: [1, 1.2, 1] }
+                    : { scale: [1, 1.1, 1] }
+                }
+                transition={{ repeat: Infinity, duration: 1.2 }}
+                className={`font-bold text-lg ${
+                  isCurrentUser ? "text-red-500" : "text-red-600"
+                }`}
+              >
+                {player.highScore}
+              </motion.span>
+            </motion.div>
+          );
+        })}
+      </div>
+
       {/* Buttons */}
-      <div className="flex justify-center gap-4 mt-3">
+      <div className="flex flex-wrap justify-center gap-3 mt-3">
         <motion.button
           onClick={() => setGameStarted(true)}
           whileHover={{ scale: 1.05 }}
@@ -87,6 +152,15 @@ function Instruction({ setGameStarted, highScore }) {
           className="cursor-pointer bg-pink-600 hover:bg-pink-700 text-white font-bold text-base px-6 py-2 rounded-full shadow-md"
         >
           Start Game 🥺
+        </motion.button>
+
+        <motion.button
+          onClick={() => setOnViewLeaderboard(true)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.9 }}
+          className="cursor-pointer bg-purple-500 hover:bg-purple-600 text-white font-bold text-base px-6 py-2 rounded-full shadow-md"
+        >
+          View Leaderboard 🏆
         </motion.button>
 
         <motion.button

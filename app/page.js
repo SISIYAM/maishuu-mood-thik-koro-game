@@ -11,11 +11,13 @@ import FloatingHeart from "@/components/FloatingHeart";
 import {
   funnyTexts,
   gameMessages,
+  getTopThreeLeaderboard,
   happyEndMessages,
   loveMessages,
   setLeaderboard,
 } from "@/utils/utils";
 import LoginForm from "@/components/LoginForm";
+import Leaderboard from "@/components/Leaderboard";
 
 const objects = ["❤️", "💣", "🐱", "😻", "🌸", "🐾", "🍫", "🐶", "🐸", "🌹"];
 
@@ -40,6 +42,8 @@ export default function MoodGame() {
   const [loveMessage, setLoveMessage] = useState(
     loveMessages[Math.floor(Math.random() * loveMessages.length)]
   );
+  const [onViewLeaderboard, setOnViewLeaderboard] = useState(false);
+  const [topThree, setTopThree] = useState([]);
 
   // user login
   const [user, setUser] = useState(null);
@@ -305,6 +309,16 @@ export default function MoodGame() {
     playSound("allTimeBgm", true);
   };
 
+  // Get top 3 users
+
+  useEffect(() => {
+    const fetchTopThree = async () => {
+      const players = await getTopThreeLeaderboard();
+      setTopThree(players);
+    };
+    fetchTopThree();
+  }, []);
+
   if (!user) {
     return (
       <div className="w-full h-screen bg-white flex flex-col justify-center p-8">
@@ -312,6 +326,16 @@ export default function MoodGame() {
       </div>
     );
   }
+
+  // leaderboard
+  if (onViewLeaderboard) {
+    return (
+      <div className="w-full h-screen bg-gradient-to-br from-pink-100 to-pink-200 flex flex-col justify-center p-8">
+        <Leaderboard onClose={() => setOnViewLeaderboard(false)} />
+      </div>
+    );
+  }
+
   // Overlay to capture first tap/click
   if (!userInteracted) {
     return (
@@ -369,7 +393,13 @@ export default function MoodGame() {
 
       {!gameStarted && !gameOver && !happyEnd ? (
         <>
-          <Instruction setGameStarted={setGameStarted} highScore={highScore} />
+          <Instruction
+            setGameStarted={setGameStarted}
+            highScore={highScore}
+            setOnViewLeaderboard={setOnViewLeaderboard}
+            topThree={topThree}
+            currentUserId={user._id}
+          />
           <FloatingHeart />
         </>
       ) : gameOver ? (
@@ -380,6 +410,8 @@ export default function MoodGame() {
             restartGame={restartGame}
             gameoverMessage={message}
             highScore={highScore}
+            user={user}
+            setOnViewLeaderboard={setOnViewLeaderboard}
           />
           <FloatingHeart />
         </>

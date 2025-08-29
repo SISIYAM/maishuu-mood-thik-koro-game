@@ -79,9 +79,46 @@ export const setLeaderboard = async (userId, score) => {
 export const getGlobalHighScore = async () => {
   try {
     const response = await axios.get("/api/leaderboard");
-    return response.data;
+    console.log(response.data);
+    if (
+      response.data &&
+      Array.isArray(response.data) &&
+      response.data.length > 0
+    ) {
+      return {
+        highScore: response.data[0].highScore,
+        userName: response.data[0].name,
+        userId: response.data[0]._id,
+      };
+    }
+
+    return { highScore: 0, userName: "", userId: "" };
   } catch (error) {
-    console.error("Failed to update leaderboard:", error);
-    return { error: "Failed to update leaderboard" };
+    console.error("Failed to fetch global high score:", error);
+    return { error: "Failed to fetch global high score" };
+  }
+};
+
+// top three leaderboard
+export const getTopThreeLeaderboard = async () => {
+  try {
+    const response = await axios.get("/api/leaderboard");
+    console.log(response.data);
+    if (
+      response.data &&
+      Array.isArray(response.data) &&
+      response.data.length > 0
+    ) {
+      return response.data.map((player) => ({
+        userId: player._id,
+        userName: player.name,
+        highScore: player.highScore,
+      }));
+    }
+
+    return [];
+  } catch (error) {
+    console.error("Failed to fetch top three leaderboard:", error);
+    return { error: "Failed to fetch top three leaderboard" };
   }
 };
