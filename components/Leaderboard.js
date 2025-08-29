@@ -15,7 +15,13 @@ export default function Leaderboard({ onClose }) {
       const data = await res.json();
 
       if (data && data.length > 0) {
-        setPlayers((prev) => [...prev, ...data]);
+        setPlayers((prev) => {
+          const newPlayers = [...prev, ...data];
+          const uniquePlayers = Array.from(
+            new Map(newPlayers.map((p) => [p._id, p])).values()
+          );
+          return uniquePlayers;
+        });
       } else {
         setHasMore(false);
       }

@@ -31,15 +31,17 @@ export async function getLeaderboard() {
   }
 }
 
-export async function getFullLeaderboard() {
+export async function getFullLeaderboard(page = 1, limit = 20) {
   await connectDB();
   try {
-    const leaderboard = await User.find({}, "_id name highScore").sort({
-      highScore: -1,
-    });
+    const skip = (page - 1) * limit;
+    const leaderboard = await User.find({}, "_id name highScore")
+      .sort({ highScore: -1 })
+      .skip(skip)
+      .limit(limit);
 
     return { status: 200, data: leaderboard };
   } catch (error) {
-    return { status: 500, data: { error: "Failed to fetch full leaderboard" } };
+    return { status: 500, data: { error: "Failed to fetch leaderboard" } };
   }
 }
