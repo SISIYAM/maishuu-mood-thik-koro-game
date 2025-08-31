@@ -78,7 +78,7 @@ function GameOver({
         transition={{ delay: 0.5 }}
         className={`bg-yellow-100 border-2 rounded-xl px-5 py-3 mb-6 flex items-center gap-3 shadow-inner ${
           isCurrentUserHighScorer
-            ? "border-green-500 bg-green-100" // Highlight if current user is the global high scorer
+            ? "border-green-500 bg-green-100"
             : "border-yellow-400"
         }`}
       >
@@ -96,7 +96,7 @@ function GameOver({
           <motion.span
             animate={
               isCurrentUserHighScorer
-                ? { scale: [1, 1.3, 1] } // Bigger bounce if current user
+                ? { scale: [1, 1.3, 1] }
                 : { scale: [1, 1.2, 1] }
             }
             transition={{ repeat: Infinity, duration: 1.2 }}

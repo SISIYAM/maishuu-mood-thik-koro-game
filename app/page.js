@@ -317,7 +317,7 @@ export default function MoodGame() {
       setTopThree(players);
     };
     fetchTopThree();
-  }, []);
+  }, [score]);
 
   if (!user) {
     return (
