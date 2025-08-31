@@ -13,7 +13,6 @@ export default function Leaderboard({ onClose }) {
     try {
       const res = await fetch(`/api/leaderboard?page=${page}&limit=20`);
       const data = await res.json();
-
       if (data && data.length > 0) {
         setPlayers((prev) => {
           const newPlayers = [...prev, ...data];
@@ -34,23 +33,11 @@ export default function Leaderboard({ onClose }) {
     fetchLeaderboard();
   }, [page]);
 
-  // Animations
-  const top3Animation = {
-    initial: { scale: 0.9, opacity: 0 },
-    animate: { scale: 0.98, opacity: 1 },
-    transition: { type: "spring", stiffness: 200, damping: 15 },
-  };
-
-  const top10Animation = {
+  // Animations (simple slide-in, no fade looping)
+  const cardAnim = {
     initial: { y: 20, opacity: 0 },
     animate: { y: 0, opacity: 1 },
     transition: { duration: 0.4 },
-  };
-
-  const othersAnimation = {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    transition: { duration: 0.2 },
   };
 
   return (
@@ -82,37 +69,61 @@ export default function Leaderboard({ onClose }) {
         className="flex flex-col gap-4"
       >
         {players.map((player, i) => {
-          let animProps = othersAnimation;
-          let extraClasses = "bg-white border border-pink-200 text-gray-900";
+          let extraClasses =
+            "bg-white border border-pink-200 text-gray-900 shadow";
+          let badge = null;
 
-          if (i < 3) {
-            animProps = top3Animation;
+          if (i === 0) {
+            // 1st place
             extraClasses =
-              "bg-yellow-100 border-2 border-yellow-400 shadow-xl animate-pulse text-gray-900";
+              "bg-yellow-100 border-2 border-yellow-400 shadow-2xl relative mt-8";
+            badge = (
+              <Crown className="absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10 text-yellow-500 drop-shadow animate-bounce" />
+            );
+          } else if (i === 1) {
+            // 2nd place
+            extraClasses =
+              "bg-gray-100 border-2 border-gray-400 shadow-xl relative";
+            badge = (
+              <span className="absolute -top-3 right-3 bg-gray-400 text-white text-xs px-2 py-1 rounded-full shadow">
+                🥈 2nd
+              </span>
+            );
+          } else if (i === 2) {
+            // 3rd place
+            extraClasses =
+              "bg-amber-100 border-2 border-amber-500 shadow-xl relative";
+            badge = (
+              <span className="absolute -top-3 right-3 bg-amber-600 text-white text-xs px-2 py-1 rounded-full shadow">
+                🥉 3rd
+              </span>
+            );
           } else if (i < 10) {
-            animProps = top10Animation;
-            extraClasses =
-              "bg-pink-200 border-2 border-pink-400 shadow-lg text-gray-900";
+            // Top 10
+            extraClasses = "bg-pink-200/60 border-2 border-pink-400 shadow-lg";
           }
 
           return (
             <motion.div
               key={i}
-              initial={animProps.initial}
-              animate={animProps.animate}
-              transition={animProps.transition}
+              {...cardAnim}
               className={`flex items-center justify-between p-3 sm:p-4 rounded-xl ${extraClasses} w-full`}
             >
+              {badge}
               <div className="flex items-center gap-3 sm:gap-4 truncate">
                 <span className="text-lg sm:text-xl font-bold text-pink-700 min-w-[40px]">
                   #{i + 1}
                 </span>
-                <span className="text-sm sm:text-lg font-semibold truncate max-w-[180px] sm:max-w-[300px]">
+                <span
+                  className={`text-sm sm:text-lg font-semibold truncate max-w-[180px] sm:max-w-[300px] ${
+                    i === 0 ? "text-gray-900" : "text-gray-700"
+                  }`}
+                >
                   {player.name || "Unknown Player"}
                 </span>
               </div>
               <span className="text-sm sm:text-lg font-bold text-pink-700">
-                {player.score}
+                {player.highScore}
               </span>
             </motion.div>
           );
