@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Crown } from "lucide-react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-export default function Leaderboard({ onClose }) {
+export default function Leaderboard({ onClose, currentUserId }) {
   const [players, setPlayers] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -74,14 +74,13 @@ export default function Leaderboard({ onClose }) {
           let badge = null;
 
           if (i === 0) {
-            // 1st place
+            // 1st place → Green
             extraClasses =
-              "bg-yellow-100 border-2 border-yellow-400 shadow-2xl relative mt-8";
+              "bg-green-100 border-2 border-green-400 shadow-2xl relative mt-8";
             badge = (
-              <Crown className="absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10 text-yellow-500 drop-shadow animate-bounce" />
+              <Crown className="absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10 text-green-500 drop-shadow animate-bounce" />
             );
           } else if (i === 1) {
-            // 2nd place
             extraClasses =
               "bg-gray-100 border-2 border-gray-400 shadow-xl relative";
             badge = (
@@ -90,7 +89,6 @@ export default function Leaderboard({ onClose }) {
               </span>
             );
           } else if (i === 2) {
-            // 3rd place
             extraClasses =
               "bg-amber-100 border-2 border-amber-500 shadow-xl relative";
             badge = (
@@ -99,8 +97,14 @@ export default function Leaderboard({ onClose }) {
               </span>
             );
           } else if (i < 10) {
-            // Top 10
             extraClasses = "bg-pink-200/60 border-2 border-pink-400 shadow-lg";
+          }
+
+          // ✅ Highlight logged-in user
+          // Assume current user id is available in `currentUserId`
+          const isCurrentUser = player._id === currentUserId;
+          if (isCurrentUser) {
+            extraClasses += " bg-blue-100 border-blue-400 font-bold";
           }
 
           return (
@@ -119,7 +123,7 @@ export default function Leaderboard({ onClose }) {
                     i === 0 ? "text-gray-900" : "text-gray-700"
                   }`}
                 >
-                  {player.name || "Unknown Player"}
+                  {player.name || "Unknown Player"} {isCurrentUser && "👑 You!"}
                 </span>
               </div>
               <span className="text-sm sm:text-lg font-bold text-pink-700">

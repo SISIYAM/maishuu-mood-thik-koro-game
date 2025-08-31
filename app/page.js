@@ -331,7 +331,10 @@ export default function MoodGame() {
   if (onViewLeaderboard) {
     return (
       <div className="w-full h-screen bg-gradient-to-br from-pink-100 to-pink-200 flex flex-col justify-center p-8">
-        <Leaderboard onClose={() => setOnViewLeaderboard(false)} />
+        <Leaderboard
+          onClose={() => setOnViewLeaderboard(false)}
+          currentUserId={user._id}
+        />
       </div>
     );
   }
