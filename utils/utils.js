@@ -109,11 +109,13 @@ export const getTopThreeLeaderboard = async () => {
       Array.isArray(response.data) &&
       response.data.length > 0
     ) {
-      return response.data.map((player) => ({
-        userId: player._id,
-        userName: player.name,
-        highScore: player.highScore,
-      }));
+      return response.data
+        .map((player) => ({
+          userId: player._id,
+          userName: player.name,
+          highScore: player.highScore,
+        }))
+        .slice(0, 1);
     }
 
     return [];
